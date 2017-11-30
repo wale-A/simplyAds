@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - SimplyAds</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/jqueryui")
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow:700" rel="stylesheet">
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-default navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">
+                        <img alt="" src="~/Assets/logo.png" class="logo">
+                    </a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right main-nav">
+                        @if (!Request.IsAuthenticated)
+                        {
+                        <li><a href="@Url.Action(" About", "Home" )" style="color: rgba(64,224,208, 0.8); font-weight: 700;" class="nav-link">About Us</a></li>
+                        }
+                    </ul>
+                    @if (User.IsInRole("Admin"))
+                    {
+                    <ul class="nav navbar-nav navbar-right main-nav">
+                        <li>@Html.ActionLink("Adverts", "AllAdverts", "Admin", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+                        <li>@Html.ActionLink("Car", "Index", "Car", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+                        <li>@Html.ActionLink("Content", "Index", "ContentPricing", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+                        <li>@Html.ActionLink("Duration", "Index", "Duration", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: rgba(64,224,208, 0.8); font-weight: 700;">
+                                Admin <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Add User", "Register", "Account", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+                                <li>@Html.ActionLink("Log Out", "LogOff", "Account", null, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content" id="layoutBodyContainer">
+        <div class="container" style="padding-bottom:150px; padding-left: 0px;">
+            @RenderBody()
+        </div>
+
+
+        <footer class="footer hidden-xs nav navbar-fixed-bottom" style="margin-top:100px">
+            <div class="container">
+                <div class="text-center">
+                    <div class="center-block">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <a href="#home"><img src="~/Assets/logo.png" class="logo"></a>
+                                <small class="text-muted block">&copy; Copyright @DateTime.Now.Year. All Rights Reserved.</small>
+                                <small class="text-muted block">Lagos, Nigeria</small>
+                            </div>
+                            <div class="col-sm-3">
+                                <ul class="list-unstyled footer-nav-links" id="footer-nav-links-one">
+                                    <li class="text-left"><a href="#home">Home</a></li>
+                                    <li class="text-left"><a href="#about">About</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-3">
+                                <ul class="list-unstyled footer-nav-links" id="footer-nav-links-two">
+                                    <li class="text-left"><a href="#">Terms</a></li>
+                                    <li class="text-left"><a href="#about">Privacy Policy</a></li>
+                                    <li class="text-left"><a href="#">Help Center</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-3">
+                                <ul class="list-unstyled">
+                                    <li><b>Social Links</b></li>
+                                    <li class="social-links">
+                                        <a href="" class="text-left"><img src="~/Assets/twitter.svg"></a>
+                                        <a href="" class="text-left"><img src="~/Assets/facebook.svg"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <footer class="footer hidden-sm hidden-md hidden-lg navbar navbar-fixed-bottom" style="margin-top:50px">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a href="/"><img src="~/Assets/logo.png" class="logo"></a>
+                    </div>
+                    <div class="col-xs-6">
+                        <ul class="list-unstyled footer-nav-links">
+                            <li class="text-left"><a href="@Url.Action(" About", "Home" )">About</a></li>
+                            <li class="text-left"><a href="#">Terms</a></li>
+                            <li class="text-left"><a href="#about">Privacy Policy</a></li>
+                            <li class="text-left"><a href="#">Help Center</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-6">
+                        <ul class="list-unstyled">
+                            <li><b>Social Links</b></li>
+                            <li class="social-links">
+                                <a href="" class="text-left"><img src="~/assets/twitter.svg"></a>
+                                <a href="" class="text-left"><img src="~/assets/facebook.svg"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="clearfix"></div>
+                        <small class="text-muted block">&copy; Copyright @DateTime.UtcNow.AddHours(1).Year. All Rights Reserved.</small>
+                        <small class="text-muted block">Lagos, Nigeria</small>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryui")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

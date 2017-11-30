@@ -1,0 +1,504 @@
+﻿@model SimplyAds.Models.Advert
+
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPageWithoutFooter.cshtml";
+}
+
+<section class="overlay-section" id="overlay">
+    <a href="javascript:void(0)" class="close-btn">&times;</a>
+
+    <div class="overlay-content">
+        <div class="flex-container">
+            <div class="h2">Create Ad Campaign</div>
+        </div>
+
+        <div class="flex-container ad-amount">
+            <div class="h2">Advert Fee: <span class="amount">&#8358; </span> <span class="amount" id="totalPrice"></span></div>
+        </div>
+        <div class="flex-container">
+            <div class="flex-item-one">
+                <form action="/Home/GetPrice" method="post" enctype="multipart/form-data" data-parsley-validate>
+                    @*@using (Html.BeginForm("GetPrice", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {*@
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input class="form-control" type="text" name="CustomerName" required
+                                       data-parsley-trigger="focusout change keyup">
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">Email</label>
+                                <input class="form-control" type="email" id="CustomerEmail" name="CustomerEmail" required
+                                       data-parsley-trigger="focusout change keyup" data-parsley-type="email">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">Phone Number</label>
+                                <input class="form-control" type="tel" id="CustomerPhone" name="CustomerPhone" required data-parsley-type="digits"
+                                       data-parsley-trigger="focusout change keyup">
+                                @Html.ValidationMessageFor(x => x.CustomerPhone)
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">Duration</label>
+                                @Html.DropDownList("Duration", ViewBag.Duration as IEnumerable<SelectListItem>, "select a duration", new
+                           {
+                               @class = "form-control required duration",
+                               required = "required",
+                               data_parsley_trigger = "focusout change keyup",
+                           })
+                                @*<select class="form-control" name="duration" required
+                                    data-parsley-trigger="focusout change keyup"
+                                    data-parsley-type="email"></select>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">No. of Cars</label>
+                                @Html.DropDownList("NoOfCars", ViewBag.Car as IEnumerable<SelectListItem>, "select number of cars", new { @class = "form-control cars", required = "required", data_parsley_trigger = "focusout change keyup", })
+                                @*<select class="form-control" name="no_of_cars" required
+                                    data-parsley-trigger="focusout change keyup"></select>*@
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">Content</label>
+                                <input type="file" name="content" id="content" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="text-left">Start Date</label>
+                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control", @readonly = "readonly", data_parsley_trigger = "focusout change keyup", required = "required" })
+                                @*<input class="form-control" type="date" name="start_date" required
+                                    data-parsley-trigger="focusout change keyup">*@
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <div class="form-group form-inline">
+                                @Html.LabelFor(model => model.Urgent, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @*<div class="col-md-10">*@
+                                <div class="checkbox">
+                                    <span style="margin-left: 15px;">
+                                        @Html.EditorFor(model => model.Urgent)
+                                    </span>
+                                </div>
+                                @*</div>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <input class="btn simply-btn btn-lg btn-block" type="submit" value="Create Campaign">
+                </form>
+                @*}*@
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="overlay-section" id="search-overlay">
+    <a href="javascript:void(0)" class="search-overlay-logo">
+        <img alt="" src="~/Assets/logo.png" class="logo">
+    </a>
+    <a href="javascript:void(0)" class="search-close-btn">&times;</a>
+
+    <div class="overlay-content">
+        <div class="flex-container">
+            <div class="h2" id="ad-info-text">Ad Information</div>
+        </div>
+        <div class="flex-container">
+            <div class="flex-item-two">
+                <div class="row ad-info">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Ref No:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdRefNo"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Name:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdName"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ad-info">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Email:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdEmail"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Phone Number:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdPhone"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ad-info">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Start Date:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdStartDate"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">End Date:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdEndDate"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ad-info">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <p class="h3 text-muted">Duration:</p>
+                            </div>
+                            <div class="col-xs-8 col-xs-offset-1">
+                                <p class="h3" id="currentAdDuration"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <p class="h3 text-muted">No of Cars:</p>
+                            </div>
+                            <div class="col-xs-8">
+                                <p class="h3" id="currentAdCars"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ad-info" style="padding-bottom: 15px;">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="form-inline">
+                                <div class="col-sm-2">
+                                    <p class="h3 text-muted">Urgent:</p>
+                                </div>
+                                <div class="col-sm-9 col-sm-offset-1">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="currentAdUrgent">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="form-inline">
+                                <div class="col-sm-2">
+                                    <p class="h3 text-muted">Treated:</p>
+                                </div>
+                                <div class="col-sm-9 col-sm-offset-1">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="currentAdTreated">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ad-info">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <p class="h3 text-muted">Amount:</p>
+                            </div>
+                            <div class="col-sm-9 col-sm-offset-1">
+                                <p class="h3 text-success">
+                                    &#8358;
+                                    <span class="amount" id="currentAdTotalPrice"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="hero-section" data-target="home" id="home">
+    <div class="homepage-hero-module">
+        <div class="video-container">
+            <div class="filter">
+                <div class="container">
+                    <div class="section-content">
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+                                <div class="text" id="homeText">
+                                    <div class="h1 text-uppercase">
+                                        Have you met <span style="color: rgba(251, 114, 96, 1)">SimplyAds</span>?
+                                    </div>
+                                    <div class="h3" style="margin-bottom: 25px; margin-top:15px;">
+                                        @*SimplyAds is a digital taxi-top advertising channel which plays ads in a
+                                        geo-targeted and daily-parted
+                                        manner, publishing the right message to the right audience in the right time and
+                                        place.*@
+                                        the advertising platform that allows you to communicate with Lagos!
+                                    </div>
+
+                                </div>
+                                <button class="btn simply-btn btn-lg js-overlay-btn">
+                                    Create your Ad Campaign
+                                </button>
+                            </div>
+
+                            <div class="col-sm-12" id="homeSearchDiv">
+                                <div class="text-center" style="margin-bottom: 15px;">Have a reference number? Search for you Ad here!</div>
+                                <div class="input-group input-group-lg" id="homePageForm" style="margin: auto">
+                                    <input class="form-control" type="search" name="search_ad" id="search_ad_ref"
+                                           placeholder="Search with reference number">
+                                    <span class="input-group-btn">
+                                        <button class="btn simply-btn search-overlay-btn">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="container">
+                    <div class="col-sm-12">
+                        <div class="h3 text-center">Have a reference number? Search for you Ad here!</div>
+                        <div class="input-group input-group-lg">
+                            <input class="form-control" type="search" name="search_ad" id="search_ad_ref"
+                                   placeholder="Search with reference number">
+                            <span class="input-group-btn">
+                                <button class="btn simply-btn search-overlay-btn">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <video autoplay loop class="fillWidth hidden-xs hidden-sm">
+                <source src="~/Assets/Home-And-Away.mp4" type="video/mp4" />
+                Your browser does not support the video tag. I suggest you upgrade your browser.
+                <source src="~/Assets/Home-And-Away.webm" type="video/webm" />
+                Your browser does not support the video tag. I suggest you upgrade your browser.
+            </video>
+            <div class="poster hidden">
+                <img src="~/Assets/Home-And-Away.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+
+
+@*<input type="hidden" id="prevCarVal" />
+    <input type="hidden" id="prevDurationVal" />
+    <input type="hidden" id="prevContentVal" />
+    <input type="hidden" id="prevUrgentVal" />*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+
+            //var xx = @ViewBag.ShowAlert;
+            @if (ViewBag.ShowAlert){
+        @:        alert('@TempData["ErrorMessage"]');
+                    }
+
+            $('.search-overlay-btn').click(openSearchOverlay);
+
+            function openSearchOverlay() {
+                var searchReferenceNumber = $('#search_ad_ref').val();
+                //console.log(searchReferenceNumber);
+
+                $.get ("@Url.Action("SearchForAdvert", "Home")",
+                     { referenceNo: searchReferenceNumber })
+                .done (function(data) {
+                    var jsonData = JSON.parse(data);
+                    $("#currentAdTotalPrice").html(jsonData.Amount);
+                    $("#currentAdRefNo").html(jsonData.RefNo);
+                    $("#currentAdName").html(jsonData.Name);
+                    $("#currentAdEmail").html(jsonData.Email);
+                    $("#currentAdPhone").html(jsonData.Phone);
+                    $("#currentAdStartDate").html(jsonData.Start);
+                    $("#currentAdEndDate").html(jsonData.End);
+                    $("#currentAdDuration").html(jsonData.Duration);
+                    $("#currentAdCars").html(jsonData.Cars);
+                    $("#currentAdUrgent").prop("checked", jsonData.Urgent);
+                    $("#currentAdTreated").prop("checked", jsonData.Treated);
+                    //console.log(jsonData);
+                });
+
+                $("#search-overlay").css('height', '100%');
+            }
+
+
+
+            $('.cars').on('change',  getPriceWithAjax);
+            @*function () {
+                var carValue = this.value;
+                $.get('@Url.Action("GetCarPrice", "Home")', { carText: carValue })
+                .done(function (data) {
+                    var prevCarValue = Number.parseFloat($('#prevCarVal').val()) || 0;
+                    var currentPrice = Number.parseFloat( $('#totalPrice').text()) || 0;
+                    var newAdPrice = currentPrice - prevCarValue + Number.parseFloat(data);
+                    $('#totalPrice').html(newAdPrice);
+                    $('#prevCarVal').val(data);
+                });
+            });*@
+
+            $('.duration').on('change',  getPriceWithAjax);
+            @*function () {
+                var durationValue = this.value;
+                $.get('@Url.Action("GetDurationPrice", "Home")', { durationText: durationValue })
+                .done(function (data) {
+                    var prevCarValue = Number.parseFloat($('#prevDurationVal').val()) || 0;
+                    var currentPrice = Number.parseFloat($('#totalPrice').text()) || 0;
+                    var newAdPrice = currentPrice - prevCarValue + Number.parseFloat(data);
+                    $('#totalPrice').html(newAdPrice);
+                    $('#prevDurationVal').val(data);
+                });
+            });*@
+
+            $('#content').on('change', getPriceWithAjax);
+            @*function () {
+                console.log('size ' + ( this.files[0].size || 0));
+                if (content.files[0] == null) {
+                    var prevContentValue = Number.parseFloat($('#prevContentVal').val()) || 0;
+                    var currentPrice = Number.parseFloat( $('#totalPrice').text()) || 0;
+                    var newAdPrice = currentPrice - prevContentValue;
+                    $('#totalPrice').html(newAdPrice);
+                    $('#prevContentVal').val(0);
+                }
+                else {
+                    $.get('@Url.Action("GetContentPrice", "Home")', { contentType: (content.files[0].type || "null") })
+                    .done(function (data) {
+                        var prevContentValue = Number.parseFloat($('#prevContentVal').val()) || 0;
+                        var currentPrice = Number.parseFloat( $('#totalPrice').text()) || 0;
+                        var newAdPrice = currentPrice - prevContentValue + Number.parseFloat(data);
+                        $('#totalPrice').html(newAdPrice);
+                        $('#prevContentVal').val(data);
+                    });
+                }
+            });*@
+
+            $('#StartDate').datepicker({
+                dateFormat: "dd/M/yy",
+                minDate: new Date(@DateTime.UtcNow.AddHours(1).AddDays(14).Year,
+                    @(DateTime.UtcNow.AddHours(1).AddDays(14).Month - 1), @DateTime.UtcNow.AddHours(1).AddDays(14).Day),
+            });
+
+            $('#Urgent').on('click',
+                function() {
+                    if (this.checked){
+                        $('#StartDate').datepicker(
+                            "change",
+                            { minDate: new Date(@DateTime.UtcNow.AddHours(1).Year,
+                            @(DateTime.UtcNow.AddHours(1).Month - 1), @DateTime.UtcNow.Day) }
+                        );
+                    }
+                    else {
+                        $('#StartDate').datepicker(
+                            "change",
+                            {
+                                minDate:  new Date(@DateTime.UtcNow.AddHours(1).AddDays(14).Year,
+                                        @(DateTime.UtcNow.AddHours(1).AddDays(14).Month - 1),
+                                        @DateTime.UtcNow.AddHours(1).AddDays(14).Day)
+                            }
+                        );
+                    }
+                    getPriceWithAjax();
+                });
+
+            function getPriceWithAjax() {
+                var urgent =  $('#Urgent').prop('checked');
+                var duration = $('#Duration').val();
+                var noOfCars = $('.cars').val();
+                var regEx = /(?:\.([^.]+))?$/;
+                //var contentType = regEx.exec($('#content').val());
+                //alert ($('#content').val());
+                var contentType = "";
+                if ( $('#content').val() != undefined)
+                    contentType= $('#content').val().slice(($('#content').val().lastIndexOf(".") - 1 >>> 0) + 2);
+                else
+                    contentType = "";
+                //console.log("urgent => " + urgent) ;
+                //console.log("duration => " + duration) ;
+                //console.log("noOfCars => " + noOfCars) ;
+                //console.log("contentType => " + contentType);
+
+                $.get ("@Url.Action("CalculateAdvertPrice", "Home")",
+                      { Duration:duration, NoOfCars:noOfCars, Urgent:urgent, ContentExtension: contentType })
+                .done (function(data) {
+                    $('#totalPrice').html(data);
+                });
+
+            }
+
+        });
+    </script>
+}

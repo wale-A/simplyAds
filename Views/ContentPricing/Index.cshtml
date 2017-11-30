@@ -1,0 +1,160 @@
+﻿@model PagedList.IPagedList<SimplyAds.Models.ContentPricing>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<h2>Content Pricing</h2>
+
+<p>
+    <a data-toggle="modal" href="#new-entry">Create New</a>
+</p>
+<div class="table table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>
+                Content Type
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Created By
+            </th>
+            <th>
+                Date Created
+            </th>
+
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreated)
+                </td>
+
+                <td>
+                    <a data-toggle="modal" href="#edit-entry"
+                       data-referenceno="@item.ID">Edit</a>
+                    |
+                    <a data-toggle="modal" href="#delete-entry"
+                       data-referenceno="@item.ID">Delete</a>
+
+                    @*@Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", "ContentPricing", new { page }))
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#edit-entry').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('referenceno');
+                var link = '@Url.Action("Edit", "ContentPricing")' + '/' + id;
+                @*var link = '@Url.Action("Advert", "Admin" )';*@
+                $.ajax({
+                    url: link,
+                    //data: { referenceNo: adRefNo },
+                    success: function (result) {
+                        $('#editAd').html(result);
+                    }
+                });
+            });
+
+            $('#new-entry').on('show.bs.modal', function (event) {
+                var link = '@Url.Action("Create", "ContentPricing")';
+                $.ajax({
+                    url: link,
+                    success: function (result) {
+                        $('#newEntry').html(result);
+                    }
+                });
+            });
+
+            $('#delete-entry').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('referenceno');
+                var modal = $(this)
+                modal.find('.content-pricing-id').val(id)
+
+            });
+
+        });
+    </script>
+}
+
+<div class="modal fade" id="new-entry" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title text-center text-info">New Content Pricing</h2>
+            </div>
+            <div class="modal-body">
+                <div id="newEntry"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-entry" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title text-center text-info">Edit Content Pricing</h2>
+            </div>
+            <div class="modal-body">
+                <div id="editAd"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-entry" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title text-center text-info">Content Pricing</h2>
+            </div>
+            <div class="modal-body">
+                <p class="text-center"> Are you sure you want to delete this entry ? </p>
+                <div id="delete-form">
+                    @using (Html.BeginForm("Delete", "ContentPricing", new { }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" class="content-pricing-id">
+                        <button type="submit" class="btn btn-primary text-uppercase">Delete</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,201 @@
+﻿@model PagedList.IPagedList<SimplyAds.Models.Advert>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "AllAdverts";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<h2>All Adverts</h2>
+
+<div class="table-responsive" style="margin-left: -10px;">
+    <table class="table table-hover table-striped">
+        <tr>
+            <th>
+
+            </th>
+            <th>
+                Ref. No.
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Phone Number
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Date Place
+            </th>
+            <th>
+                Urgent ?
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                No of Cars
+            </th>
+            <th>
+                Content
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                End Date
+            </th>
+            <th>
+                Treated ?
+            </th>
+            <th></th>
+        </tr>
+
+        @*@foreach (var item in Model) {*@
+            @for (int i = 0; i < Model.Count; i++) { 
+            <tr>
+                <td bgcolor="@Model.ElementAt(i).getBackgroundColor()"></td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).ReferenceNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).CustomerPhone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).CustomerEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).DatePlaced)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).Urgent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).NoOfCars)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).AdContent.ContentType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => @Model.ElementAt(i).Treated)
+                </td>
+                <td>
+                    <a data-toggle="modal" href="#view-advert" 
+                       data-referenceno="@Model.ElementAt(i).ReferenceNo">Select</a>
+                    
+                    @if (Model.ElementAt(i).Treated)
+                    {
+                        @: | <a data-toggle="modal" href="#update-advert" data-id="@Model.ElementAt(i).ID">Add Update</a>
+                        @: | <a href="@(Url.Action("selectedad", new { referenceNo  = Model.ElementAt(i).ReferenceNo}))" title="open in full" target="_blank"> <span class="glyphicon glyphicon-play"></span> </a>
+                    }
+
+
+                </td>
+            </tr>
+}
+    </table>
+    @if (Model.Count > 0)
+    {
+        if (Model.ElementAt(0) != null &&
+        (@Model.ElementAt(0).DatePlaced.AddHours(2) >= DateTime.UtcNow.AddHours(1)) &&
+        !Model.ElementAt(0).Treated)
+        {
+            <audio autoplay loop>
+                <source src="~/Audio/AlarmSound.mp3" type="audio/mp3" />
+            </audio>
+        }
+    }
+</div>
+<div style="margin-bottom:50px;">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of
+    @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("AllAdverts", "Admin", new { page }))
+</div>
+
+
+@section Scripts {
+        @*<script src="~/Scripts/notiModal.min.js" type="text/javascript"></script>*@
+        <script>
+            $(window).on('load', function () {
+                window.setTimeout(function () {
+                    location.reload(); }, 600000);
+            });
+
+            $(document).ready(function () {
+                $('#view-advert').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget);
+                    var adRefNo = button.data('referenceno');
+                    @*var link = '@Url.Action("Advert", "Admin")' + '/' + adRefNo;*@
+                    var link = '@Url.Action("SelectedAd", "Admin")';
+                    $.ajax({
+                        url: link,
+                        data: { referenceNo: adRefNo },
+                        success: function (result) {
+                            $('#selectedAd').html(result);
+                        }
+                    });
+                });
+
+                $('#update-advert').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget);
+                    var adRefNo = button.data('id');
+                    @*var link = '@Url.Action("Advert", "Admin")' + '/' + adRefNo;*@
+                    var link = '@Url.Action("Create", "AdUpdate")';
+                    $.ajax({
+                        url: link,
+                        data: { advertId: adRefNo },
+                        success: function (result) {
+                            $('#updateAd').html(result);
+                        }
+                    });
+                });
+
+            });
+        </script>
+    
+}
+
+<div class="modal fade" id="view-advert"aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title text-center text-info">Advert</h2>
+            </div>
+            <div class="modal-body">
+                <div id="selectedAd"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update-advert" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title text-center text-info">Advert</h2>
+            </div>
+            <div class="modal-body">
+                <div id="updateAd"></div>
+            </div>
+        </div>
+    </div>
+</div>
