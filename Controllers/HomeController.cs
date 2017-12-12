@@ -18,9 +18,31 @@ namespace SimplyAds.Controllers
 
         public async Task<ActionResult> Index()
         {
+            var subdomain = getSubdomain(Request);
+            if (subdomain.ToLower() == "admin" && !Request.IsAuthenticated)
+            { 
+                return RedirectToAction("Login", "Account");
+            }
+
             ViewBag.ShowAlert = ViewBag.ShowAlert ?? false;
             await setViewBagDetailsForCarAndDuration();
             return View();
+        }
+
+        public static string getSubdomain(HttpRequestBase Request)
+        {
+            string host = Request.Url.Host.Replace("www.", "");
+
+
+            var subdomains = host.Split('.');
+            string subdomain = "";
+
+            if (subdomains.Length > 2)
+            {
+                subdomain = subdomains[0];
+            }
+
+            return subdomain;
         }
 
         [HttpPost]
@@ -103,7 +125,7 @@ namespace SimplyAds.Controllers
             Advert advert = await db.Adverts.Include(x => x.AdUpdates).SingleOrDefaultAsync(x => x.ReferenceNo == referenceNo);
             bool advertPaid = await ConfirmUpdatePaymentForAd(advert);
             setMessageForAdvertView(advertPaid);
-            
+
             if (Request.IsAjaxRequest())
                 return PartialView(advert);
             return View(advert);
@@ -115,7 +137,17 @@ namespace SimplyAds.Controllers
             //bool advertPaid = await ConfirmUpdatePaymentForAd(advert);
             var ad = new SearchedAdViewModel()
             {
-                Name = advert.CustomerName, RefNo = advert.ReferenceNo, Email = advert.CustomerEmail, Phone = advert.CustomerPhone, Duration = advert.Duration, Amount = advert.Amount.ToString(), Urgent = advert.Urgent, Treated = advert.Treated, Start = advert.StartDate.Value.ToShortDateString(), End = advert.EndDate.Value.ToShortDateString(), Cars = advert.NoOfCars.ToString()
+                Name = advert.CustomerName,
+                RefNo = advert.ReferenceNo,
+                Email = advert.CustomerEmail,
+                Phone = advert.CustomerPhone,
+                Duration = advert.Duration,
+                Amount = advert.Amount.ToString(),
+                Urgent = advert.Urgent,
+                Treated = advert.Treated,
+                Start = advert.StartDate.Value.ToShortDateString(),
+                End = advert.EndDate.Value.ToShortDateString(),
+                Cars = advert.NoOfCars.ToString()
             };
             var adAsJson = Newtonsoft.Json.JsonConvert.SerializeObject(ad);
             return adAsJson;
@@ -168,7 +200,7 @@ namespace SimplyAds.Controllers
         {
             if (content != null && content.ContentLength > 0 && (content.ContentType.Contains("image") || content.ContentType.Contains("video")))
                 return saveContentReturnFilePath(content);
-            
+
             else
                 throw new Exception("invalid file");
         }

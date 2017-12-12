@@ -206,6 +206,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\bkgImage.jpg" />
     <Content Include="Assets\facebook.svg" />
     <Content Include="Assets\Home-And-Away.jpg" />
     <Content Include="Assets\Home-And-Away.mp4" />
@@ -356,6 +357,7 @@
     <Content Include="Views\Shared\View.cshtml" />
     <Content Include="Views\Home\Advert.cshtml" />
     <Content Include="Views\Shared\_LayoutPageWithoutFooter.cshtml" />
+    <Content Include="Views\Shared\_LayoutPage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

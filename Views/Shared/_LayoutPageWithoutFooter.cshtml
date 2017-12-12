@@ -33,7 +33,7 @@
                         @*<li><a href="/" style="color: rgba(64,224,208,0.8); font-weight: 700;" class="text-uppercase nav-link">Home</a></li>*@
                         @if (!Request.IsAuthenticated)
                         {
-                            <li><a href="@Url.Action("About", "Home")" style="color: rgba(64,224,208, 0.8); font-weight: 700;" class="text-uppercase nav-link">About Us</a></li>
+                            @*<li><a href="@Url.Action("About", "Home")" style="color: rgba(64,224,208, 0.8); font-weight: 700;" class="text-uppercase nav-link">About Us</a></li>*@
                             @*<li>@Html.ActionLink("Log In", "Login", "Account", new { }, new { style = "color: rgba(64,224,208, 0.8); font-weight: 700;" })</li>*@
                         }
                         @*@Html.Partial("_LoginPartial")*@
@@ -102,7 +102,7 @@
         </div>*@
     <main class="main-content">
         @RenderBody()
-              
+               
     </main>
 
 
